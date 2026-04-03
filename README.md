@@ -1,25 +1,27 @@
-# 🚀 Complete Recommendation System Microservice
+# 🚀 Complete Recommendation System Prototype
 
-A production-ready recommendation system built with **FastAPI, SQLite, SQLAlchemy, and a modular recommendation engine**.  
-This project combines database design, ranking logic, REST API development, performance evaluation, and dashboard monitoring into a portfolio-grade microservice.
+A **functional recommendation system prototype** built with **FastAPI, SQLite, SQLAlchemy, and a modular recommendation engine**.
+
+This project demonstrates backend system design for personalized course recommendations using API routing, SQLite persistence, modular ranking logic, cold-start fallback, feedback collection, and seeded sample-data evaluation.
+
+It is intentionally positioned as a **portfolio-grade backend prototype** focused on clean architecture and reproducible behavior using seeded data.
 
 ---
 
 # 📌 Project Overview
-This system provides **personalized course recommendations** using multiple ranking strategies.
+This system provides **personalized course recommendations** using multiple ranking strategies over a seeded sample dataset.
 
-### ✨ Key Features
-- Personalized recommendations based on user history
+### ✨ Implemented Features
+- Personalized recommendations based on seeded user history
 - Category similarity recommendations
-- Trending/popularity fallback
-- Cold-start support for new users
+- Popularity-based fallback for cold-start users
 - SQLite database with normalized schema
-- REST API with FastAPI
-- Request tracing and metrics
-- Dashboard homepage
-- Load testing with 10 concurrent users
-- Auto-generated evaluation report
-- Unit tests for API and engine
+- REST API built using FastAPI
+- Dashboard homepage for API navigation
+- Feedback recording endpoint
+- Seeded sample dataset for reproducible testing
+- Basic unit tests for API, engine, and data layer
+- Prototype evaluation on sample seeded relevance data
 
 ---
 
@@ -59,8 +61,7 @@ day30_capstone/
 │   └── evaluator.py
 ├── scripts/
 │   ├── seed_data.py
-│   ├── evaluate.py
-│   └── load_test.py
+│   └── evaluate.py
 ├── tests/
 │   ├── test_api.py
 │   ├── test_data.py
@@ -140,7 +141,7 @@ GET /recommend/1
   {
     "content_id": 1,
     "title": "Course 1",
-    "explanation": "Popular in AI"
+    "explanation": "Recommended from seeded interaction patterns"
   }
 ]
 ```
@@ -175,7 +176,10 @@ POST /feedback
 GET /metrics
 ```
 
+This endpoint provides **basic prototype-level request statistics and service health details**.
+
 ---
+
 # 🗄️ Database Schema Diagram
 ```text
 users
@@ -199,34 +203,38 @@ interactions
  └── created_at
 ```
 
+---
+
 # 🧠 Recommendation Strategies
-The engine combines 3 strategies:
+The engine combines 3 prototype strategies:
 
 1. **History-Based Filtering**
 2. **Category Similarity**
-3. **Popularity/Trending Ranking**
+3. **Popularity Fallback**
 
 This ensures:
 - personalization
-- novelty
-- cold-start robustness
+- cold-start handling
+- deterministic seeded behavior
 
 ---
 
-# 📊 Performance Report Summary
-Generated automatically using:
+# 📊 Prototype Evaluation Report
+Generated using:
+
 ```bash
 python -m scripts.evaluate
 ```
 
-### Results
-- Precision@5: 0.60
-- Recall@5: 0.75
-- NDCG@5: 0.82
-- Average Response Time: 42 ms
-- Concurrent Users Tested: 10
+The evaluation computes:
+- Precision@5
+- Recall@5
+- NDCG@5
+
+using **actual recommendation outputs over seeded sample relevance sets**.
 
 See full details in:
+
 ```text
 evaluation_report.md
 ```
@@ -234,37 +242,51 @@ evaluation_report.md
 ---
 
 # 🧪 Running Tests
+Run the available basic unit tests:
+
 ```bash
 pytest
 ```
+
+These validate:
+- API endpoint behavior
+- evaluator metric functions
+- database seeded row presence
+- recommendation fallback flow
 
 ---
 
 # 🎥 Project Demo Video
 Demo video (under 3 minutes):
 
+https://youtu.be/nzMbw3j8UH8?feature=shared
 
+---
 
 # 🏗️ Architecture Decisions
-- **FastAPI** chosen for high-performance REST APIs
+- **FastAPI** used for simple REST API routing
 - **SQLite** used for lightweight local persistence
-- **Repository pattern** for clean database abstraction
-- **Modular engine design** for scalability
-- **Separate evaluation pipeline** for reproducible reporting
-- **Dashboard enhancement** for easier demo and usability
+- **Repository pattern** used for clean data abstraction
+- **Modular engine design** used for easy experimentation
+- **Separate evaluation pipeline** used for reproducible prototype metrics
+- **Dashboard layer** added for easier demonstration
 
 ---
 
-# 📌 Future Improvements
+# 📌 Scope and Future Improvements
+Current scope:
+- prototype recommendation workflow
+- seeded sample-data validation
+- backend API demonstration
+
+Possible future improvements:
 - Redis caching
 - JWT authentication
-- Real-time personalization
-- Frontend React dashboard
+- real-user datasets
+- frontend React dashboard
 - Docker deployment
-- Cloud hosting on Render
+- cloud deployment
 
 ---
 
-Built as part of **Day 30 Capstone: Complete Recommendation System**.
-
-youtube video demo link : https://youtu.be/nzMbw3j8UH8?feature=shared
+Built as part of **Day 30 Capstone: Complete Recommendation System Prototype**
