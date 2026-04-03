@@ -1,73 +1,68 @@
-# Evaluation Report — Complete Recommendation System
+# 📊 Prototype Evaluation Report — Complete Recommendation System
 
-## Dataset Summary
-- Users: 10
-- Courses: 20
+This report documents the **prototype-level validation** of the recommendation system using the seeded sample dataset included in the project.
+
+The goal of this evaluation is to verify:
+- functional recommendation flow
+- seeded ranking correctness
+- cold-start fallback behavior
+- API response validity
+- metric computation logic on sample relevance sets
+
+This report does **not claim real-world production benchmarking or live-user performance validation**.
+
+---
+
+# 📂 Dataset Summary
+The evaluation uses the seeded SQLite dataset.
+
+- Seeded Users: 10
+- Seeded Courses: 20
 - Categories: AI, ML, Data, Python
-- Feedback enabled: Yes
-- Cold start support: Yes
+- Feedback Recording: Enabled
+- Cold Start Handling: Enabled
+- Database: `recommendation.db`
 
 ---
 
-## Accuracy Metrics
+# 🎯 Ranking Metric Validation
+The evaluation computes prototype ranking metrics using actual evaluator functions.
+
+## Metrics Computed
 - Precision@5: 0.60
-- Recall@5: 0.75
-- NDCG@5: 0.74
+- Recall@5: 1.00
+- NDCG@5: 0.89
+
+These metrics are derived from:
+- seeded recommendation output: [1, 2, 3, 4, 5]
+- seeded relevant items: [1, 3, 5]
+
+This validates **ranking metric correctness on deterministic sample data**.
 
 ---
 
-## Performance Metrics
-- Average Response Time: 42 ms
-- Concurrent Users Tested: 10
-- Cache Enabled: Yes
-- Request Tracing: Enabled
+# 🧪 Functional Validation Results
+- recommendation endpoint returns ranked course results
+- feedback endpoint stores interaction records
+- health endpoint confirms service status
+- cold-start users receive popularity fallback recommendations
+- invalid users return proper error responses
+- evaluator functions execute successfully
+- seeded database contains expected rows
 
 ---
 
-## Load Test Results
-- Parallel Requests: 10
-- Successful Requests: 10/10
-- Failure Rate: 0%
-- Average Latency: 55 ms
-
----
-
-## Cold Start Validation
-New users with no interaction history successfully received popularity-based recommendations.
-
----
-
-## Error Handling
-- Unknown users return 404
-- Invalid inputs handled by FastAPI validation
-- Health endpoint confirms service availability
-
----
-
-## Dashboard Validation
-Dashboard available at:
-http://127.0.0.1:8000/
-
-The dashboard successfully displays:
-- request count
-- latency
-- endpoint links
-- health status
-
----
-
-## Screenshots
-
-### Dashboard
+# 📸 Screenshots
+## Dashboard
 ![Dashboard](screenshots/image_1.png)
 
-### Swagger API Docs
+## Swagger API Docs
 ![Swagger API Docs](screenshots/image_2.png)
 
-### Recommendation Output
+## Recommendation Output
 ![Recommendation Output](screenshots/image.png)
 
 ---
 
-## Conclusion
-The recommendation system successfully satisfies all capstone requirements, including database integration, API design, cold-start handling, feedback learning, load support, dashboard monitoring, and performance evaluation.
+# ✅ Conclusion
+The recommendation system prototype successfully demonstrates API routing, SQLite integration, modular recommendation orchestration, cold-start fallback, feedback persistence, and seeded sample-data metric validation.
