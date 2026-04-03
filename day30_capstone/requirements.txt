@@ -4,3 +4,7 @@ sqlalchemy
 pytest
 requests
 matplotlib
+pydantic
+pytest
+requests
+httpx
