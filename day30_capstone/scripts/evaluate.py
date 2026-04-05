@@ -13,15 +13,43 @@ interaction_repo = InteractionRepository(db)
 
 orchestrator = RecommendationOrchestrator(content_repo, interaction_repo)
 
-user_id = 1
-results = orchestrator.get_recommendations(user_id, limit=5)
-recommended = [item["content_id"] for item in results]
+users = db.query(User).limit(3).all()
 
-relevant = [1, 4, 5]
+all_results = []
+precisions = []
+recalls = []
+ndcgs = []
 
-precision = precision_at_k(recommended, relevant, 5)
-recall = recall_at_k(recommended, relevant, 5)
-ndcg = ndcg_at_k(recommended, relevant, 5)
+for user in users:
+    results = orchestrator.get_recommendations(user.id, limit=5)
+    recommended = [item["content_id"] for item in results]
+
+    # use user's interacted content as relevance ground truth
+    relevant = [
+        interaction.content_id
+        for interaction in db.query(Interaction)
+        .filter(Interaction.user_id == user.id)
+        .all()
+    ]
+
+    if not relevant:
+        continue
+
+    precision = precision_at_k(recommended, relevant, 5)
+    recall = recall_at_k(recommended, relevant, 5)
+    ndcg = ndcg_at_k(recommended, relevant, 5)
+
+    precisions.append(precision)
+    recalls.append(recall)
+    ndcgs.append(ndcg)
+
+    all_results.append(
+        f"- User {user.id}: recs={recommended}, relevant={relevant}"
+    )
+
+avg_precision = sum(precisions) / len(precisions)
+avg_recall = sum(recalls) / len(recalls)
+avg_ndcg = sum(ndcgs) / len(ndcgs)
 
 user_count = db.query(User).count()
 content_count = db.query(Content).count()
@@ -37,24 +65,22 @@ Generated At: {timestamp}
 - Users in DB: {user_count}
 - Courses in DB: {content_count}
 - Interactions in DB: {interaction_count}
-- Evaluated User ID: {user_id}
+- Users Evaluated: {len(users)}
 
 ## 🎯 Actual Recommendation Output
-Generated Recommendations: {recommended}
-Seeded Relevant Items: {relevant}
+{chr(10).join(all_results)}
 
-## 📈 Computed Ranking Metrics
-- Precision@5: {precision:.2f}
-- Recall@5: {recall:.2f}
-- NDCG@5: {ndcg:.2f}
+## 📈 Average Computed Ranking Metrics
+- Precision@5: {avg_precision:.2f}
+- Recall@5: {avg_recall:.2f}
+- NDCG@5: {avg_ndcg:.2f}
 
 ## ✅ Validation Summary
-- Recommendation flow executed successfully
+- Multiple users evaluated dynamically
 - Metrics computed from actual orchestrator output
-- Seeded interactions used for personalization
-- SQLite database state captured live
-- Report generated directly from evaluation script
+- Seeded interactions used as relevance labels
+- SQLite DB snapshot captured live
 """
 
 Path("evaluation_report.md").write_text(report, encoding="utf-8")
-print("✅ Auto-generated evaluation report created successfully.")
+print("✅ Multi-user evaluation report generated successfully.")
