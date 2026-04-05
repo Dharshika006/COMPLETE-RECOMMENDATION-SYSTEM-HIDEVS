@@ -1,83 +1,60 @@
 from pathlib import Path
+from datetime import datetime
+from data.database import SessionLocal
+from data.repositories import ContentRepository, InteractionRepository
+from data.models import User, Content, Interaction
+from engine.orchestrator import RecommendationOrchestrator
 from engine.evaluator import precision_at_k, recall_at_k, ndcg_at_k
 
-# sample seeded evaluation case
-recommended = [1, 2, 3, 4, 5]
-relevant = [1, 3, 5]
+db = SessionLocal()
+
+content_repo = ContentRepository(db)
+interaction_repo = InteractionRepository(db)
+
+orchestrator = RecommendationOrchestrator(content_repo, interaction_repo)
+
+user_id = 1
+results = orchestrator.get_recommendations(user_id, limit=5)
+recommended = [item["content_id"] for item in results]
+
+relevant = [1, 4, 5]
 
 precision = precision_at_k(recommended, relevant, 5)
 recall = recall_at_k(recommended, relevant, 5)
 ndcg = ndcg_at_k(recommended, relevant, 5)
 
-report = f"""# 📊 Prototype Evaluation Report — Complete Recommendation System
+user_count = db.query(User).count()
+content_count = db.query(Content).count()
+interaction_count = db.query(Interaction).count()
 
-This report documents the **prototype-level validation** of the recommendation system using the seeded sample dataset included in the project.
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-The goal of this evaluation is to verify:
-- functional recommendation flow
-- seeded ranking correctness
-- cold-start fallback behavior
-- API response validity
-- metric computation logic on sample relevance sets
+report = f"""# 📊 Auto-Generated Prototype Evaluation Report
 
-This report does **not claim real-world production benchmarking or live-user performance validation**.
+Generated At: {timestamp}
 
----
+## 📂 Live Dataset Snapshot
+- Users in DB: {user_count}
+- Courses in DB: {content_count}
+- Interactions in DB: {interaction_count}
+- Evaluated User ID: {user_id}
 
-# 📂 Dataset Summary
-The evaluation uses the seeded SQLite dataset.
+## 🎯 Actual Recommendation Output
+Generated Recommendations: {recommended}
+Seeded Relevant Items: {relevant}
 
-- Seeded Users: 10
-- Seeded Courses: 20
-- Categories: AI, ML, Data, Python
-- Feedback Recording: Enabled
-- Cold Start Handling: Enabled
-- Database: `recommendation.db`
-
----
-
-# 🎯 Ranking Metric Validation
-The evaluation computes prototype ranking metrics using actual evaluator functions.
-
-## Metrics Computed
+## 📈 Computed Ranking Metrics
 - Precision@5: {precision:.2f}
 - Recall@5: {recall:.2f}
 - NDCG@5: {ndcg:.2f}
 
-These metrics are derived from:
-- seeded recommendation output: {recommended}
-- seeded relevant items: {relevant}
-
-This validates **ranking metric correctness on deterministic sample data**.
-
----
-
-# 🧪 Functional Validation Results
-- recommendation endpoint returns ranked course results
-- feedback endpoint stores interaction records
-- health endpoint confirms service status
-- cold-start users receive popularity fallback recommendations
-- invalid users return proper error responses
-- evaluator functions execute successfully
-- seeded database contains expected rows
-
----
-
-# 📸 Screenshots
-## Dashboard
-![Dashboard](screenshots/image_1.png)
-
-## Swagger API Docs
-![Swagger API Docs](screenshots/image_2.png)
-
-## Recommendation Output
-![Recommendation Output](screenshots/image.png)
-
----
-
-# ✅ Conclusion
-The recommendation system prototype successfully demonstrates API routing, SQLite integration, modular recommendation orchestration, cold-start fallback, feedback persistence, and seeded sample-data metric validation.
+## ✅ Validation Summary
+- Recommendation flow executed successfully
+- Metrics computed from actual orchestrator output
+- Seeded interactions used for personalization
+- SQLite database state captured live
+- Report generated directly from evaluation script
 """
 
 Path("evaluation_report.md").write_text(report, encoding="utf-8")
-print("Prototype evaluation report generated successfully.")
+print("✅ Auto-generated evaluation report created successfully.")

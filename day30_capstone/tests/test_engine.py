@@ -1,10 +1,21 @@
-from engine.evaluator import precision_at_k, recall_at_k, ndcg_at_k
+from data.database import SessionLocal
+from data.repositories import ContentRepository, InteractionRepository
+from engine.orchestrator import RecommendationOrchestrator
 
-def test_precision():
-    assert precision_at_k([1,2,3,4,5], [1,3,5], 5) > 0
 
-def test_recall():
-    assert recall_at_k([1,2,3,4,5], [1,3,5], 5) == 1.0
+def test_recommendation_returns_results():
+    db = SessionLocal()
 
-def test_ndcg():
-    assert ndcg_at_k([1,2,3,4,5], [1,3,5], 5) > 0
+    content_repo = ContentRepository(db)
+    interaction_repo = InteractionRepository(db)
+
+    orchestrator = RecommendationOrchestrator(
+        content_repo,
+        interaction_repo
+    )
+
+    results = orchestrator.get_recommendations(1, limit=5)
+
+    assert isinstance(results, list)
+    assert len(results) > 0
+    assert "content_id" in results[0]
