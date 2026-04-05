@@ -13,7 +13,7 @@ interaction_repo = InteractionRepository(db)
 
 orchestrator = RecommendationOrchestrator(content_repo, interaction_repo)
 
-users = db.query(User).limit(3).all()
+users = db.query(User).all()
 
 all_results = []
 precisions = []
