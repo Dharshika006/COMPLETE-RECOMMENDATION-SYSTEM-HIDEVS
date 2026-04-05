@@ -219,7 +219,7 @@ This ensures:
 
 ---
 
-# 📊 Prototype Evaluation Report
+# 📊 Auto-Generated Evaluation Pipeline
 Generated using:
 
 ```bash
